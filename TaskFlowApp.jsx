@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Plus, Settings, ChevronLeft, List, FolderOpen, Check, Clock, AlertCircle } from 'lucide-react';
+import { Calendar, Plus, Settings, ChevronLeft, List, FolderOpen, Check, Clock, AlertCircle, Trash2 } from 'lucide-react';
 
 const TaskFlowApp = () => {
   const [currentView, setCurrentView] = useState('menu');
@@ -78,6 +78,18 @@ const TaskFlowApp = () => {
       task.id === taskId 
         ? { ...task, status: task.status === 'Completed' ? 'Pending' : 'Completed' }
         : task
+    ));
+  };
+
+  const deleteTask = (taskId) => {
+    setTasks(tasks.filter(task => task.id !== taskId));
+  };
+
+  const deleteProject = (projectId) => {
+    setProjects(projects.filter(project => project.id !== projectId));
+    // Also remove project association from tasks
+    setTasks(tasks.map(task => 
+      task.projectId === projectId ? { ...task, projectId: null } : task
     ));
   };
 
@@ -213,6 +225,13 @@ const TaskFlowApp = () => {
                     </span>
                   </div>
                 </div>
+                <button 
+                  onClick={() => deleteTask(task.id)}
+                  className="text-red-500 hover:text-red-400 p-2"
+                  title="Delete task"
+                >
+                  <Trash2 size={18} />
+                </button>
               </div>
             </div>
           );
@@ -274,7 +293,16 @@ const TaskFlowApp = () => {
           
           return (
             <div key={project.id} className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-              <h3 className={`${textSizes[textSize]} font-medium text-white mb-2`}>{project.name}</h3>
+              <div className="flex items-start justify-between mb-2">
+                <h3 className={`${textSizes[textSize]} font-medium text-white`}>{project.name}</h3>
+                <button 
+                  onClick={() => deleteProject(project.id)}
+                  className="text-red-500 hover:text-red-400 p-1"
+                  title="Delete project"
+                >
+                  <Trash2 size={18} />
+                </button>
+              </div>
               <div className="mb-3">
                 <div className="flex justify-between text-sm text-gray-400 mb-1">
                   <span>Progress</span>
